@@ -28,16 +28,16 @@ int main() {
 		printGeneration2d();
 	}
 
-	string input = ".00..0.0..";
-	stringToBinary(input);
-
-	vector<bool> input2; 
-    input2.push_back(1);
-    input2.push_back(1);
-    input2.push_back(1); 
-    input2.push_back(0);
-    input2.push_back(1);
-	binaryToString(input2);
+	//Testing code
+	// string input = ".00..0.0..";
+	// stringToBinary(input);
+	// vector<bool> input2; 
+    // input2.push_back(1);
+    // input2.push_back(1);
+    // input2.push_back(1); 
+    // input2.push_back(0);
+    // input2.push_back(1);
+	// binaryToString(input2);
     return 0;
 }
 
