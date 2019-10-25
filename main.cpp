@@ -10,6 +10,8 @@ vector<bool> currGen;
 void performGeneration2d();
 int getRuleIndex(bool first, bool second, bool third);
 void printGeneration2d();
+vector<bool> stringToBinary(string input);
+string binaryToString(vector<bool> input);
 
 int main() {
 	for (int i = 0; i < 15; i++) {
@@ -25,6 +27,17 @@ int main() {
 		performGeneration2d();
 		printGeneration2d();
 	}
+
+	string input = ".00..0.0..";
+	stringToBinary(input);
+
+	vector<bool> input2; 
+    input2.push_back(1);
+    input2.push_back(1);
+    input2.push_back(1); 
+    input2.push_back(0);
+    input2.push_back(1);
+	binaryToString(input2);
     return 0;
 }
 
@@ -68,5 +81,24 @@ void printGeneration2d() {
 	for (int i = 0; i < currGen.size(); i++) {
 		cout << (currGen[i] ? "O" : ".");
 	}
+	binaryToString(currGen);
 	cout << endl;
+}
+
+vector<bool> stringToBinary(string input) {
+    vector<bool> output;
+    for (int i = 0; i < input.length(); i++) {
+        (input[i] == '.') ? output.push_back(0) : output.push_back(1);
+	}
+    return output;
+}
+
+string binaryToString(vector<bool> input) {
+	string outputString;
+
+
+    for (int i = 0; i < input.size(); i++) {
+        (input[i] == 0) ? outputString+="." : outputString+="0";
+	}
+    return outputString;
 }
