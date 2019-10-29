@@ -10,6 +10,8 @@ vector<bool> currGen;
 void performGeneration2d();
 int getRuleIndex(bool first, bool second, bool third);
 void printGeneration2d();
+int binaryToDecimal(vector<bool> binary);
+vector<bool> decimalToBinary(int decimal);
 
 int main() {
 	for (int i = 0; i < 15; i++) {
@@ -25,6 +27,9 @@ int main() {
 		performGeneration2d();
 		printGeneration2d();
 	}
+
+	vector<bool> binary = decimalToBinary(22);
+	cout << binaryToDecimal(binary) << endl;
     return 0;
 }
 
@@ -69,4 +74,27 @@ void printGeneration2d() {
 		cout << (currGen[i] ? "O" : ".");
 	}
 	cout << endl;
+}
+
+int binaryToDecimal(vector<bool> binary) {
+	int i = 1;
+	int element;
+	int decimal = 0;
+	while (binary.size() != 0) {
+		element = binary.back();
+		binary.pop_back();
+		decimal += element * i;
+		i *= 2;
+	}
+	return decimal;
+}
+
+vector<bool> decimalToBinary(int decimal) {
+	vector<bool> binary;
+	while (decimal != 1) {
+		binary.insert(binary.begin(), decimal%2);
+		decimal /= 2;
+	}
+	binary.insert(binary.begin(), 1);
+	return binary;
 }
