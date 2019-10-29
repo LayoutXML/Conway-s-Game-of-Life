@@ -19,7 +19,7 @@ int numberOfGenerationsToRun();
 
 int main() {
     int size = firstGenerationSize();
-    numberOfGenerationsToRun();
+    int generations = numberOfGenerationsToRun();
 	for (int i = 0; i < size; i++) {
 		currGen.push_back(0);
 	}
@@ -29,7 +29,7 @@ int main() {
 	}
 	prevGen = currGen;
 	printGeneration2d();
-	for (int i = 0; i < 15; i++) {
+	for (int i = 0; i < generations; i++) {
 		performGeneration2d();
 		printGeneration2d();
 	}
@@ -120,6 +120,7 @@ vector<bool> decimalToBinary(int decimal) {
 
 int firstGenerationSize() {
     int generationLenght;
+    cout << "Input the lenght of the first generation:" << endl;
     cin >> generationLenght;
     if (generationLenght <= 0) {
         cout << "Error, input cannot be below 0." << endl;
@@ -129,6 +130,7 @@ int firstGenerationSize() {
 
 int numberOfGenerationsToRun() {
     int numberOfGenerations;
+    cout << "Input the number of generations to run:" << endl;
     cin >> numberOfGenerations;
     if (numberOfGenerations <= 0) {
         cout << "Error, input cannot be below 0." << endl;
