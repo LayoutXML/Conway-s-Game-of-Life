@@ -14,13 +14,17 @@ vector<bool> stringToBinary(string input);
 string binaryToString(vector<bool> input);
 int binaryToDecimal(vector<bool> binary);
 vector<bool> decimalToBinary(int decimal);
+void firstGenerationSize();
+int numberOfGenerationsToRun();
 
 int main() {
-	for (int i = 0; i < 15; i++) {
+    int size = firstGenerationSize();
+    numberOfGenerationsToRun();
+	for (int i = 0; i < size; i++) {
 		currGen.push_back(0);
 	}
 	currGen.push_back(1);
-	for (int i = 0; i < 15; i++) {
+	for (int i = 0; i < size; i++) {
 		currGen.push_back(0);
 	}
 	prevGen = currGen;
@@ -112,4 +116,22 @@ vector<bool> decimalToBinary(int decimal) {
 	}
 	binary.insert(binary.begin(), 1);
 	return binary;
+}
+
+int firstGenerationSize() {
+    int generationLenght;
+    cin >> generationLenght;
+    if (generationLenght <= 0) {
+        cout << "Error, input cannot be below 0." << endl;
+    }
+    return generationLenght;
+}
+
+int numberOfGenerationsToRun() {
+    int numberOfGenerations;
+    cin >> numberOfGenerations;
+    if (numberOfGenerations <= 0) {
+        cout << "Error, input cannot be below 0." << endl;
+    }
+    return numberOfGenerations;
 }
