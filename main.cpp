@@ -122,8 +122,9 @@ int firstGenerationSize() {
     int generationLenght;
     cout << "Input the lenght of the first generation:" << endl;
     cin >> generationLenght;
-    if (generationLenght <= 0) {
+    while (generationLenght <= 0) {
         cout << "Error, input cannot be below 0." << endl;
+        cin >> generationLenght;
     }
     return generationLenght;
 }
@@ -132,8 +133,9 @@ int numberOfGenerationsToRun() {
     int numberOfGenerations;
     cout << "Input the number of generations to run:" << endl;
     cin >> numberOfGenerations;
-    if (numberOfGenerations <= 0) {
+    while (numberOfGenerations <= 0) {
         cout << "Error, input cannot be below 0." << endl;
+        cin >> numberOfGenerations;
     }
     return numberOfGenerations;
 }
