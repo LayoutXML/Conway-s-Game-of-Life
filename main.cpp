@@ -14,7 +14,7 @@ vector<bool> stringToBinary(string input);
 string binaryToString(vector<bool> input);
 int binaryToDecimal(vector<bool> binary);
 vector<bool> decimalToBinary(int decimal);
-void firstGenerationSize();
+int firstGenerationSize();
 int numberOfGenerationsToRun();
 
 int main() {
