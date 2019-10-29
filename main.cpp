@@ -18,31 +18,28 @@ vector<bool> stringToBinary(string input);
 string binaryToString(vector<bool> input);
 int binaryToDecimal(vector<bool> binary);
 vector<bool> decimalToBinary(int decimal);
+int firstGenerationSize();
+int numberOfGenerationsToRun();
 void saveFile();
 void loadFile();
 
 int main() {
-	loadFile();
+  //loadFile();
 
-	// ruleSet.push_back(0);
-	// ruleSet.push_back(0);
-	// ruleSet.push_back(0);
-	// ruleSet.push_back(1);
-	// ruleSet.push_back(1);
-	// ruleSet.push_back(1);
-	// ruleSet.push_back(1);
-	// ruleSet.push_back(0);
-
-	// for (int i = 0; i < 15; i++) {
-	// 	currGen.push_back(0);
-	// }
-	// currGen.push_back(1);
-	// for (int i = 0; i < 15; i++) {
-	// 	currGen.push_back(0);
-	// }
+	ruleSet.push_back(0);
+	ruleSet.push_back(0);
+	ruleSet.push_back(0);
+	ruleSet.push_back(1);
+	ruleSet.push_back(1);
+	ruleSet.push_back(1);
+	ruleSet.push_back(1);
+	ruleSet.push_back(0);
+  
+    int size = firstGenerationSize();
+    int generations = numberOfGenerationsToRun();
 	prevGen = currGen;
 	printGeneration2d();
-	for (int i = 0; i < 15; i++) {
+	for (int i = 0; i < generations; i++) {
 		performGeneration2d();
 		printGeneration2d();
 	}
@@ -132,6 +129,28 @@ vector<bool> decimalToBinary(int decimal) {
 		binary.insert(binary.begin(), 0);		
 	}
 	return binary;
+}
+
+int firstGenerationSize() {
+    int generationLenght;
+    cout << "Input the lenght of the first generation:" << endl;
+    cin >> generationLenght;
+    while (generationLenght <= 0) {
+        cout << "Error, input cannot be below 0." << endl;
+        cin >> generationLenght;
+    }
+    return generationLenght;
+}
+
+int numberOfGenerationsToRun() {
+    int numberOfGenerations;
+    cout << "Input the number of generations to run:" << endl;
+    cin >> numberOfGenerations;
+    while (numberOfGenerations <= 0) {
+        cout << "Error, input cannot be below 0." << endl;
+        cin >> numberOfGenerations;
+    }
+    return numberOfGenerations;
 }
 
 void saveFile() {
