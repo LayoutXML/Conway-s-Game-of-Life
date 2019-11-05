@@ -22,20 +22,24 @@ int firstGenerationSize();
 int numberOfGenerationsToRun();
 void saveFile();
 void loadFile();
+vector<bool> chooseFirstGeneration(string input);
 
 int main() {
-  	loadFile();
+  	//loadFile();
 
-	// ruleSet.push_back(0);
-	// ruleSet.push_back(0);
-	// ruleSet.push_back(0);
-	// ruleSet.push_back(1);
-	// ruleSet.push_back(1);
-	// ruleSet.push_back(1);
-	// ruleSet.push_back(1);
-	// ruleSet.push_back(0);
-  
- //    int size = firstGenerationSize();
+	ruleSet.push_back(0);
+	ruleSet.push_back(0);
+	ruleSet.push_back(0);
+	ruleSet.push_back(1);
+	ruleSet.push_back(1);
+	ruleSet.push_back(1);
+	ruleSet.push_back(1);
+	ruleSet.push_back(0);
+    //int size = firstGenerationSize();
+
+	
+	currGen = chooseFirstGeneration(firstGeneration);
+	
     int generations = numberOfGenerationsToRun();
 	prevGen = currGen;
 	printGeneration1d();
@@ -43,8 +47,9 @@ int main() {
 		performGeneration1d(false);
 		printGeneration1d();
 	}
-
-	saveFile();
+    
+    
+	//saveFile();
     return 0;
 }
 
@@ -171,4 +176,12 @@ void loadFile() {
 	fi >> currGenString;
 	currGen = stringToBinary(currGenString);
 	fi.close();
+}
+
+vector<bool> chooseFirstGeneration(string input) {
+	cout << "Input first generation" << endl;
+	string firstGeneration;
+	cin >> firstGeneration;
+	vector<bool> generation = stringToBinary(input);
+	return generation;
 }
