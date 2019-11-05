@@ -41,17 +41,7 @@ int main() {
 	}
 	else if(choose == 2)
 	{
-	ruleSet.push_back(0);
-	ruleSet.push_back(0);
-	ruleSet.push_back(0);
-	ruleSet.push_back(1);
-	ruleSet.push_back(1);
-	ruleSet.push_back(1);
-	ruleSet.push_back(1);
-	ruleSet.push_back(0);	
-	}
-	
-    //int size = firstGenerationSize();
+  //int size = firstGenerationSize();
 
 	
 	currGen = chooseFirstGeneration();
@@ -201,7 +191,7 @@ vector<bool> chooseFirstGeneration() {
 	vector<bool> generation = stringToBinary(firstGeneration);
 	return generation;
 }
-
+  
 void randomRuleSet(){
 
 	ruleSet.push_back(0);
