@@ -22,7 +22,7 @@ int firstGenerationSize();
 int numberOfGenerationsToRun();
 void saveFile();
 void loadFile();
-vector<bool> chooseFirstGeneration(string input);
+vector<bool> chooseFirstGeneration();
 
 int main() {
   	//loadFile();
@@ -38,7 +38,7 @@ int main() {
     //int size = firstGenerationSize();
 
 	
-	currGen = chooseFirstGeneration(firstGeneration);
+	currGen = chooseFirstGeneration();
 	
     int generations = numberOfGenerationsToRun();
 	prevGen = currGen;
@@ -178,10 +178,10 @@ void loadFile() {
 	fi.close();
 }
 
-vector<bool> chooseFirstGeneration(string input) {
+vector<bool> chooseFirstGeneration() {
 	cout << "Input first generation" << endl;
 	string firstGeneration;
 	cin >> firstGeneration;
-	vector<bool> generation = stringToBinary(input);
+	vector<bool> generation = stringToBinary(firstGeneration);
 	return generation;
 }
