@@ -3,7 +3,6 @@
 #include <vector>
 #include <ctime>
 
-
 using namespace std;
 
 vector<bool> ruleSet;
@@ -15,35 +14,119 @@ int generationsPerformed = 0;
 string outputFileName = "output.txt";
 string inputFileName = "input.txt";
 
-void performGeneration1d(bool wrap);
-int getRuleIndex(bool first, bool second, bool third);
-void printGeneration1d();
-vector<bool> stringToBinary(string input);
-string binaryToString(vector<bool> input);
-int binaryToDecimal(vector<bool> binary);
-vector<bool> decimalToBinary(int decimal);
+void initialise();
 int firstGenerationSize();
 int numberOfGenerationsToRun();
-void saveFile();
-void loadFile();
-vector<bool> chooseFirstGeneration();
-void defaultRuleSet();
+void chooseFirstGeneration(int size);
+void chooseRuleSet();
 void randomRuleSet();
-void menu();
+void performGeneration1d(bool wrap);
+void performGeneration2d(bool wrap);
+void printGeneration1d();
+void printGeneration2d();
+vector<bool> stringToBinary(string input);
+string binaryToString(vector<bool> input);
+vector<bool> decimalToBinary(int decimal);
+int binaryToDecimal(vector<bool> binary);
+void loadFile();
+void saveFile();
+int getRuleIndex(bool first, bool second, bool third);
 
 int main() {
-    srand(time(0));
-	menu();
+	initialise();
 	
     int generations = numberOfGenerationsToRun();
-	prevGen = currGen;
 	printGeneration1d();
 	for (int i = 0; i < generations; i++) {
 		performGeneration1d(false);
-		printGeneration1d();
 	}
+
     saveFile();
     return 0;
+}
+
+void initialise() {
+	char option;
+
+	cout << "Load from file? [Y/n]: ";
+	cin >> option;
+
+	if (option == 'Y' || option == 'y') {
+		loadFile();
+	} else {
+		chooseFirstGeneration(firstGenerationSize());
+	}
+
+	if (ruleSet.size() != 8) {
+		cout << "Ruleset is not defined yet. Apply a random ruleset? [Y/n]: ";
+		cin >> option;
+
+		if (option == 'Y' || option == 'y') {
+			randomRuleSet();
+		} else {
+			chooseRuleSet();
+		}
+	}
+
+	cout << "Ruleset " << binaryToDecimal(ruleSet) << " applied" << endl;
+}
+
+int firstGenerationSize() {
+    int generationLength;
+    cout << "Enter the length of the first generation: ";
+    cin >> generationLength;
+    while (generationLength <= 3) {
+        cout << "Error, input cannot be below 3. Enter a new number: ";
+        cin >> generationLength;
+    }
+    return generationLength;
+}
+
+int numberOfGenerationsToRun() {
+    int numberOfGenerations;
+    cout << "Input the number of generations to run: ";
+    cin >> numberOfGenerations;
+    while (numberOfGenerations <= 0) {
+        cout << "Error, input cannot be below 0. Try again: ";
+        cin >> numberOfGenerations;
+    }
+    return numberOfGenerations;
+}
+
+void chooseFirstGeneration(int size) {
+	cout << "Enter first generation of size " << size << ". Dots (.) represent empty values, zeros (0) represent full values: " << endl;
+	string firstGeneration;
+	cin >> firstGeneration;
+	while (firstGeneration.find_first_not_of(".0") != string::npos || firstGeneration.length() != size) {
+		cout << "Illegal characters encountered or wrong generation size. Try again: ";
+		cin >> firstGeneration;
+	}
+	currGen = stringToBinary(firstGeneration);
+	prevGen = currGen;
+}
+
+void chooseRuleSet() {
+	int rulesetDecimal;
+	cout << "Enter a ruleset between 0 and 255: ";
+	cin >> rulesetDecimal;
+	if (rulesetDecimal < 0 || rulesetDecimal > 255) {
+		cout << "Incorrect value. Try again: ";
+		cin >> rulesetDecimal;
+	}
+	ruleSet = decimalToBinary(rulesetDecimal);
+}
+
+void randomRuleSet() {
+    srand(time(0));
+	ruleSet.clear();
+	ruleSet.push_back(0);
+	ruleSet.push_back(0);
+	ruleSet.push_back(0);
+	ruleSet.push_back(0);
+	ruleSet.push_back(rand() % 2);
+	ruleSet.push_back(rand() % 2);
+	ruleSet.push_back(rand() % 2);
+	ruleSet.push_back(rand() % 2);	
 }
 
 void performGeneration1d(bool wrap) {
@@ -56,6 +139,7 @@ void performGeneration1d(bool wrap) {
 	currGen[currGen.size() - 1] = ruleSet[getRuleIndex(prevGen[currGen.size() - 2], prevGen[currGen.size() - 1], wrap ? prevGen[0] : false)];
 
 	prevGen = currGen;
+	printGeneration1d();
 }
 
 void performGeneration2d(bool wrap) {
@@ -86,6 +170,84 @@ void performGeneration2d(bool wrap) {
 	}
 
 	prevGen = currGen;
+	printGeneration2d();
+}
+
+void printGeneration1d() {
+	cout << binaryToString(currGen) << endl;
+}
+
+void printGeneration2d() {
+	//empty method stub
+}
+
+vector<bool> stringToBinary(string input) {
+    vector<bool> output;
+    for (int i = 0; i < input.length(); i++) {
+        (input[i] == '.') ? output.push_back(0) : output.push_back(1);
+    }
+    return output;
+}
+
+string binaryToString(vector<bool> input) {
+	string outputString;
+    for (int i = 0; i < input.size(); i++) {
+        (input[i] == 0) ? outputString+="." : outputString+="0";
+    }
+    return outputString;
+}
+
+vector<bool> decimalToBinary(int decimal) {
+	vector<bool> binary;
+	while (decimal != 1) {
+		binary.insert(binary.begin(), decimal%2);
+		decimal /= 2;
+	}
+	binary.insert(binary.begin(), 1);
+	while(binary.size() < 8) {
+		binary.insert(binary.begin(), 0);		
+	}
+	return binary;
+}
+
+int binaryToDecimal(vector<bool> binary) {
+	int i = 1;
+	int element;
+	int decimal = 0;
+	while (binary.size() != 0) {
+		element = binary.back();
+		binary.pop_back();
+		decimal += element * i;
+		i *= 2;
+	}
+	return decimal;
+}
+
+void loadFile() {
+	//TODO: check if file exists
+	ifstream fi(inputFileName);
+	int decimalRuleSet;
+	fi >> decimalRuleSet;
+	ruleSet = decimalToBinary(decimalRuleSet);
+	fi >> generationsPerformed;
+	string currGenString;
+	fi >> currGenString;
+	currGen = stringToBinary(currGenString);
+	prevGen = currGen;
+	fi.close();
+}
+
+void saveFile() {
+	char option;
+	cout << "Save results to a file? [Y/n]: ";
+	cin >> option;
+	if (option == 'Y' || option == 'y') {
+		ofstream fr(outputFileName);
+		fr << binaryToDecimal(ruleSet) << endl;
+		fr << generationsPerformed << endl;
+		fr << binaryToString(currGen) << endl;
+		fr.close();
+	}
 }
 
 int getRuleIndex(bool first, bool second, bool third) {
@@ -113,163 +275,4 @@ int getRuleIndex(bool first, bool second, bool third) {
 		return 6;
 	}
 	return 7;
-}
-
-void printGeneration1d() {
-	cout << binaryToString(currGen) << endl;
-}
-
-vector<bool> stringToBinary(string input) {
-    vector<bool> output;
-    for (int i = 0; i < input.length(); i++) {
-        (input[i] == '.') ? output.push_back(0) : output.push_back(1);
-    }
-    return output;
-}
-
-string binaryToString(vector<bool> input) {
-	string outputString;
-    for (int i = 0; i < input.size(); i++) {
-        (input[i] == 0) ? outputString+="." : outputString+="0";
-    }
-    return outputString;
-}
-
-int binaryToDecimal(vector<bool> binary) {
-	int i = 1;
-	int element;
-	int decimal = 0;
-	while (binary.size() != 0) {
-		element = binary.back();
-		binary.pop_back();
-		decimal += element * i;
-		i *= 2;
-	}
-	return decimal;
-}
-
-vector<bool> decimalToBinary(int decimal) {
-	vector<bool> binary;
-	while (decimal != 1) {
-		binary.insert(binary.begin(), decimal%2);
-		decimal /= 2;
-	}
-	binary.insert(binary.begin(), 1);
-	while(binary.size() < 8) {
-		binary.insert(binary.begin(), 0);		
-	}
-	return binary;
-}
-
-int firstGenerationSize() {
-    int generationLenght;
-    cout << "Input the lenght of the first generation:" << endl;
-    cin >> generationLenght;
-    while (generationLenght <= 0) {
-        cout << "Error, input cannot be below 0." << endl;
-        cin >> generationLenght;
-    }
-    return generationLenght;
-}
-
-int numberOfGenerationsToRun() {
-    int numberOfGenerations;
-    cout << "Input the number of generations to run:" << endl;
-    cin >> numberOfGenerations;
-    while (numberOfGenerations <= 0) {
-        cout << "Error, input cannot be below 0." << endl;
-        cin >> numberOfGenerations;
-    }
-    return numberOfGenerations;
-}
-
-void saveFile() {
-	int toSave;
-	cout << "Do you want to save this to a file?\nYes = 1" << endl;
-	cin >> toSave;
-	if (toSave == 1) {
-		ofstream fr(outputFileName);
-		fr << binaryToDecimal(ruleSet) << endl;
-		fr << generationsPerformed << endl;
-		fr << binaryToString(currGen) << endl;
-		fr.close();
-	}
-}
-
-void loadFile() {
-	ifstream fi(inputFileName);
-	int decimalRuleSet;
-	fi >> decimalRuleSet;
-	ruleSet = decimalToBinary(decimalRuleSet);
-	fi >> generationsPerformed;
-	string currGenString;
-	fi >> currGenString;
-	currGen = stringToBinary(currGenString);
-	fi.close();
-}
-
-vector<bool> chooseFirstGeneration() {
-	cout << "Input first generation" << endl;
-	string firstGeneration;
-	cin >> firstGeneration;
-	vector<bool> generation = stringToBinary(firstGeneration);
-	return generation;
-}
-
-void defaultRuleSet() {
-    ruleSet.push_back(0);
-	ruleSet.push_back(0);
-    ruleSet.push_back(0);
-	ruleSet.push_back(1);
-	ruleSet.push_back(1);
-	ruleSet.push_back(1);
-	ruleSet.push_back(1);
-	ruleSet.push_back(0);
-}
-
-void randomRuleSet() {
-	ruleSet.push_back(0);
-	ruleSet.push_back(0);
-	ruleSet.push_back(0);
-	ruleSet.push_back(0);
-	ruleSet.push_back(rand() % 2);
-	ruleSet.push_back(rand() % 2);
-	ruleSet.push_back(rand() % 2);
-	ruleSet.push_back(rand() % 2);	
-}
-
-void menu() {
-	char selection;
-	cout<<"\nMenu";
-	cout<<"\n1 - Load File";
-	cout<<"\n2 - Choose Entire First Generation";
-	cout<<"\n3 - Choose First Generation Lenght";
-    cout<<"\n4 - Generate Random First Generation";
-	cout<<"\nEnter selection: ";
-	//read user input input
-	cin>>selection;
-	switch(selection) {
-		case '1' :{
-			loadFile();
-		}
-		break;
-		case '2' :{
-            defaultRuleSet();
-			currGen = chooseFirstGeneration();
-		}
-		break;
-		case '3' :{
-            cout << "NOT WORKING AS INTENDED" << endl;
-            defaultRuleSet();
-			firstGenerationSize();
-		}
-		break;
-        case '4' :{
-	        randomRuleSet();
-            currGen = chooseFirstGeneration();
-        }
-		break;
-		default : cout<<"\n Invalid selection";
-	}
-	cout<<"\n";
 }
