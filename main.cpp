@@ -25,26 +25,13 @@ int numberOfGenerationsToRun();
 void saveFile();
 void loadFile();
 vector<bool> chooseFirstGeneration();
+void defaultRuleSet();
 void randomRuleSet();
+void menu();
 
 int main() {
-  	//loadFile();
-	srand(time(0));
-	int choose;
-
-	printf ("enter 1 for random or 2 for 30");
-    scanf ("%d",&choose);
-
-	if(choose == 1)
-	{
-	randomRuleSet();
-	}
-	else if(choose == 2)
-	{
-  //int size = firstGenerationSize();
-
-	
-	currGen = chooseFirstGeneration();
+    srand(time(0));
+	menu();
 	
     int generations = numberOfGenerationsToRun();
 	prevGen = currGen;
@@ -53,9 +40,7 @@ int main() {
 		performGeneration1d(false);
 		printGeneration1d();
 	}
-    
-    
-	//saveFile();
+    saveFile();
     return 0;
 }
 
@@ -165,11 +150,16 @@ int numberOfGenerationsToRun() {
 }
 
 void saveFile() {
-	ofstream fr(outputFileName);
-	fr << binaryToDecimal(ruleSet) << endl;
-	fr << generationsPerformed << endl;
-	fr << binaryToString(currGen) << endl;
-	fr.close();
+	int toSave;
+	cout << "Do you want to save this to a file?\nYes = 1" << endl;
+	cin >> toSave;
+	if (toSave == 1) {
+		ofstream fr(outputFileName);
+		fr << binaryToDecimal(ruleSet) << endl;
+		fr << generationsPerformed << endl;
+		fr << binaryToString(currGen) << endl;
+		fr.close();
+	}
 }
 
 void loadFile() {
@@ -191,9 +181,19 @@ vector<bool> chooseFirstGeneration() {
 	vector<bool> generation = stringToBinary(firstGeneration);
 	return generation;
 }
-  
-void randomRuleSet(){
 
+void defaultRuleSet() {
+    ruleSet.push_back(0);
+	ruleSet.push_back(0);
+    ruleSet.push_back(0);
+	ruleSet.push_back(1);
+	ruleSet.push_back(1);
+	ruleSet.push_back(1);
+	ruleSet.push_back(1);
+	ruleSet.push_back(0);
+}
+
+void randomRuleSet() {
 	ruleSet.push_back(0);
 	ruleSet.push_back(0);
 	ruleSet.push_back(0);
@@ -202,5 +202,40 @@ void randomRuleSet(){
 	ruleSet.push_back(rand() % 2);
 	ruleSet.push_back(rand() % 2);
 	ruleSet.push_back(rand() % 2);	
+}
 
+void menu() {
+	char selection;
+	cout<<"\nMenu";
+	cout<<"\n1 - Load File";
+	cout<<"\n2 - Choose Entire First Generation";
+	cout<<"\n3 - Choose First Generation Lenght";
+    cout<<"\n4 - Generate Random First Generation";
+	cout<<"\nEnter selection: ";
+	//read user input input
+	cin>>selection;
+	switch(selection) {
+		case '1' :{
+			loadFile();
+		}
+		break;
+		case '2' :{
+            defaultRuleSet();
+			currGen = chooseFirstGeneration();
+		}
+		break;
+		case '3' :{
+            cout << "NOT WORKING AS INTENDED" << endl;
+            defaultRuleSet();
+			firstGenerationSize();
+		}
+		break;
+        case '4' :{
+	        randomRuleSet();
+            currGen = chooseFirstGeneration();
+        }
+		break;
+		default : cout<<"\n Invalid selection";
+	}
+	cout<<"\n";
 }
