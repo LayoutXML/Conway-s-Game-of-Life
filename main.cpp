@@ -1,6 +1,8 @@
 #include <iostream>
 #include <fstream>
 #include <vector>
+#include <ctime>
+
 
 using namespace std;
 
@@ -24,20 +26,28 @@ int firstGenerationSize();
 int numberOfGenerationsToRun();
 void saveFile();
 void loadFile();
+vector<bool> chooseFirstGeneration();
+void randomRuleSet();
 
 int main() {
-  	// loadFile();
+  	//loadFile();
+	srand(time(0));
+	int choose;
 
-	ruleSet.push_back(0);
-	ruleSet.push_back(0);
-	ruleSet.push_back(0);
-	ruleSet.push_back(1);
-	ruleSet.push_back(1);
-	ruleSet.push_back(1);
-	ruleSet.push_back(1);
-	ruleSet.push_back(0);
-  
- //    int size = firstGenerationSize();
+	printf ("enter 1 for random or 2 for 30");
+    scanf ("%d",&choose);
+
+	if(choose == 1)
+	{
+	randomRuleSet();
+	}
+	else if(choose == 2)
+	{
+  //int size = firstGenerationSize();
+
+	
+	currGen = chooseFirstGeneration();
+    
     int generations = numberOfGenerationsToRun();
 	prevGen = currGen;
 	printGeneration1d();
@@ -45,7 +55,6 @@ int main() {
 		performGeneration1d(false);
 		printGeneration1d();
 	}
-
 	// saveFile();
     return 0;
 }
@@ -205,4 +214,25 @@ void loadFile() {
 	fi >> currGenString;
 	currGen = stringToBinary(currGenString);
 	fi.close();
+}
+
+vector<bool> chooseFirstGeneration() {
+	cout << "Input first generation" << endl;
+	string firstGeneration;
+	cin >> firstGeneration;
+	vector<bool> generation = stringToBinary(firstGeneration);
+	return generation;
+}
+  
+void randomRuleSet(){
+
+	ruleSet.push_back(0);
+	ruleSet.push_back(0);
+	ruleSet.push_back(0);
+	ruleSet.push_back(0);
+	ruleSet.push_back(rand() % 2);
+	ruleSet.push_back(rand() % 2);
+	ruleSet.push_back(rand() % 2);
+	ruleSet.push_back(rand() % 2);	
+
 }
