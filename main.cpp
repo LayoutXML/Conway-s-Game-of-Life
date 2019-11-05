@@ -11,9 +11,9 @@ int generationsPerformed = 0;
 string outputFileName = "output.txt";
 string inputFileName = "input.txt";
 
-void performGeneration2d();
+void performGeneration1d(bool wrap);
 int getRuleIndex(bool first, bool second, bool third);
-void printGeneration2d();
+void printGeneration1d();
 vector<bool> stringToBinary(string input);
 string binaryToString(vector<bool> input);
 int binaryToDecimal(vector<bool> binary);
@@ -24,37 +24,37 @@ void saveFile();
 void loadFile();
 
 int main() {
-  //loadFile();
+  	loadFile();
 
-	ruleSet.push_back(0);
-	ruleSet.push_back(0);
-	ruleSet.push_back(0);
-	ruleSet.push_back(1);
-	ruleSet.push_back(1);
-	ruleSet.push_back(1);
-	ruleSet.push_back(1);
-	ruleSet.push_back(0);
+	// ruleSet.push_back(0);
+	// ruleSet.push_back(0);
+	// ruleSet.push_back(0);
+	// ruleSet.push_back(1);
+	// ruleSet.push_back(1);
+	// ruleSet.push_back(1);
+	// ruleSet.push_back(1);
+	// ruleSet.push_back(0);
   
-    int size = firstGenerationSize();
+ //    int size = firstGenerationSize();
     int generations = numberOfGenerationsToRun();
 	prevGen = currGen;
-	printGeneration2d();
+	printGeneration1d();
 	for (int i = 0; i < generations; i++) {
-		performGeneration2d();
-		printGeneration2d();
+		performGeneration1d(false);
+		printGeneration1d();
 	}
 
 	saveFile();
     return 0;
 }
 
-void performGeneration2d() {
+void performGeneration1d(bool wrap) {
 	generationsPerformed++;
-	currGen[0] = ruleSet[getRuleIndex(false, prevGen[0], prevGen[1])];
+	currGen[0] = ruleSet[getRuleIndex(wrap ? prevGen[currGen.size() - 1] : false, prevGen[0], prevGen[1])];
 	for (int i = 1; i < currGen.size() - 1; i++) {
 		currGen[i] = ruleSet[getRuleIndex(prevGen[i - 1], prevGen[i], prevGen[i + 1])];
 	}
-	currGen[currGen.size() - 1] = ruleSet[getRuleIndex(prevGen[currGen.size() - 2], prevGen[currGen.size() - 1], false)];
+	currGen[currGen.size() - 1] = ruleSet[getRuleIndex(prevGen[currGen.size() - 2], prevGen[currGen.size() - 1], wrap ? prevGen[0] : false)];
 	prevGen = currGen;
 }
 
@@ -85,7 +85,7 @@ int getRuleIndex(bool first, bool second, bool third) {
 	return 7;
 }
 
-void printGeneration2d() {
+void printGeneration1d() {
 	cout << binaryToString(currGen) << endl;
 }
 
