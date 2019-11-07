@@ -25,7 +25,7 @@ void randomRuleSet();
 void performGeneration1d(bool wrap);
 void performGeneration2d(bool wrap);
 void printGeneration1d();
-void printGeneration2d();
+void printGeneration2d(vector<vector<bool>> generation);
 vector < bool > stringToBinary(string input);
 string binaryToString(vector < bool > input);
 vector < bool > decimalToBinary(int decimal);
@@ -33,6 +33,8 @@ int binaryToDecimal(vector < bool > binary);
 void loadFile();
 void saveFile();
 int getRuleIndex(bool first, bool second, bool third);
+void gameOfLife(vector<vector<bool>> board, int ticks);
+bool gameOfLifeDecision(bool tl, bool tm, bool tr, bool l, bool itself, bool r, bool bl, bool bm, bool br);
 
 int main() {
     initialise();
@@ -167,15 +169,100 @@ void performGeneration2d(bool wrap) {
     }
 
     prevGen = currGen;
-    printGeneration2d();
+    printGeneration2d(currGen2d);
+}
+
+void gameOfLife(vector<vector<bool>> board, int ticks) {
+	//board [row][column]
+
+	// vector<vector<bool>> board;
+	// vector<bool> emptyRow;
+	// for (int i = 0; i < width; i++) {
+	// 	emptyRow.push_back(false);
+	// }
+	// for (int i = 0; i < height; i++) {
+	// 	board.push_back(emptyRow);
+	// }
+
+	vector<vector<bool>> prevBoard;
+
+	for (int i = 0; i < ticks; i++) {
+		prevBoard = board;
+
+		//top
+		board[0][0] = gameOfLifeDecision(false, false, false, false, prevBoard[0][0], prevBoard[0][1], false, prevBoard[1][0], prevBoard[1][1]);
+		for (int j = 1; j < board[0].size() - 1; j++) {
+			board[0][j] = gameOfLifeDecision(false, false, false, prevBoard[0][j - 1], prevBoard[0][j], prevBoard[0][j + 1], prevBoard[1][j - 1], prevBoard[1][j], prevBoard[1][j + 1]);
+		}
+		board[0][board[0].size() - 1] = gameOfLifeDecision(false, false, false, prevBoard[0][board[0].size() - 2], prevBoard[0][board[0].size() - 1], false, prevBoard[1][board[0].size() - 2], prevBoard[1][board[0].size() - 1], false);
+
+		//middle rows
+		for (int k = 1; k < board.size() - 1; k++) {
+			board[k][0] = gameOfLifeDecision(false, prevBoard[k - 1][0], prevBoard[k - 1][1], false, prevBoard[k][0], prevBoard[k][1], false, prevBoard[k + 1][0], prevBoard[k + 1][1]);
+			for (int j = 1; j < board[0].size() - 1; j++) {
+				board[0][j] = gameOfLifeDecision(prevBoard[k - 2][j - 1], prevBoard[k - 1][j], prevBoard[k - 1][j + 1], prevBoard[k][j - 1], prevBoard[k][j], prevBoard[k][j + 1], prevBoard[k + 1][j - 1], prevBoard[k + 1][j], prevBoard[k + 1][j + 1]);
+			}
+			board[k][board[0].size() - 1] = gameOfLifeDecision(prevBoard[k - 1][board[0].size() - 2], prevBoard[k - 1][board[0].size() - 1], false, prevBoard[k][board[0].size() - 2], prevBoard[k][board[0].size() - 1], false, prevBoard[k + 1][board[0].size() - 2], prevBoard[k + 1][board[0].size() - 1], false);
+		}
+
+		//bottom row
+		for (int k = 1; k < board.size() - 1; k++) {
+			board[k][0] = gameOfLifeDecision(false, prevBoard[k - 1][0], prevBoard[k - 1][1], false, prevBoard[k][0], prevBoard[k][1], false, false, false);
+			for (int j = 1; j < board[0].size() - 1; j++) {
+				board[0][j] = gameOfLifeDecision(prevBoard[k - 2][j - 1], prevBoard[k - 1][j], prevBoard[k - 1][j + 1], prevBoard[k][j - 1], prevBoard[k][j], prevBoard[k][j + 1], false, false, false);
+			}
+			board[k][board[0].size() - 1] = gameOfLifeDecision(prevBoard[k - 1][board[0].size() - 2], prevBoard[k - 1][board[0].size() - 1], false, prevBoard[k][board[0].size() - 2], prevBoard[k][board[0].size() - 1], false, false, false, false);
+		}
+
+		printGeneration2d(board);
+	}
+}
+
+bool gameOfLifeDecision(bool tl, bool tm, bool tr, bool l, bool itself, bool r, bool bl, bool bm, bool br) {
+	int liveNeighbours = 0;
+	if (tl) {
+		liveNeighbours++;
+	}
+	if (tm) {
+		liveNeighbours++;
+	}
+	if (tr) {
+		liveNeighbours++;
+	}
+	if (l) {
+		liveNeighbours++;
+	}
+	if (r) {
+		liveNeighbours++;
+	}
+	if (bl) {
+		liveNeighbours++;
+	}
+	if (bm) {
+		liveNeighbours++;
+	}
+	if (br) {
+		liveNeighbours++;
+	}
+
+	if (itself && liveNeighbours < 2) {
+		return false;
+	}
+	if (itself && liveNeighbours < 4) {
+		return true;
+	} else if (itself) {
+		return false;
+	}
+	return true;
 }
 
 void printGeneration1d() {
     cout << binaryToString(currGen) << endl;
 }
 
-void printGeneration2d() {
+void printGeneration2d(vector<vector<bool>> generation) {
     //empty method stub
+    //TODO: write this method with generation form a parameter
 }
 
 vector < bool > stringToBinary(string input) {
