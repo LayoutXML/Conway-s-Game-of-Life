@@ -16,11 +16,11 @@ vector <vector<bool>> currGen2d;
 int generationsPerformed = 0;
 bool is1d = true;
 
-void initialise();
+bool initialise();
 int firstGenerationSize(bool isLength);
 int numberOfGenerationsToRun();
-void chooseFirstGeneration(int size);
-void chooseFirstGeneration2d(int size, int height);
+void chooseFirstGeneration(size_t size);
+void chooseFirstGeneration2d(size_t size, int height);
 void chooseRuleSet();
 void randomRuleSet();
 void performGeneration1d(bool wrap);
@@ -31,16 +31,31 @@ vector < bool > stringToBinary(string input);
 string binaryToString(vector < bool > input);
 vector < bool > decimalToBinary(int decimal);
 int binaryToDecimal(vector < bool > binary);
-void loadFile();
+bool loadFile();
 void saveFile();
 int getRuleIndex(bool first, bool second, bool third);
 void gameOfLife(vector<vector<bool>> board, int ticks);
 bool gameOfLifeDecision(bool tl, bool tm, bool tr, bool l, bool itself, bool r, bool bl, bool bm, bool br);
 
 int main() {
-    initialise();
+    if (!initialise()) {
+    	return 0;
+    }
 
     int generations = numberOfGenerationsToRun();
+  	bool wrap = false;
+  	string option;
+
+    cout << "Do you want to wrap? [Y/n]: ";
+    cin >> option;
+    if (cin.fail()) {
+    	cin.clear();
+    	option = "";
+    }
+    if (option == "Y" || option == "y") {
+    	wrap = true;
+    }
+
     if (is1d) {
     	printGeneration1d();
     } else {
@@ -48,9 +63,9 @@ int main() {
     }
     for (int i = 0; i < generations; i++) {
     	if (is1d) {
-        	performGeneration1d(false);
+        	performGeneration1d(wrap);
         } else {
-        	performGeneration2d(true);
+        	performGeneration2d(wrap);
         }
     }
 
@@ -58,38 +73,53 @@ int main() {
     return 0;
 }
 
-void initialise() {
-    char option;
+bool initialise() {
+    string option;
 
     cout << "Do you want to play Conway's Game of Life? [Y/n]: ";
     cin >> option;
-    if (option == 'Y' || option == 'y') {
+    if (cin.fail()) {
+    	cout << "fail" << endl;
+    	cin.clear();
+    	option = "";
+    }
+    if (option == "Y" || option == "y") {
 		vector<vector<bool>> board;
-    	int size = firstGenerationSize(true);
+    	size_t size = firstGenerationSize(true);
     	int height = firstGenerationSize(false);
 		string firstGeneration;
 	    for (int i = 0; i < height; i++) {
 		    cout << "Enter one row of generation of size " << size << ". Dots (.) represent empty values, zeros (0) represent full values (" << i+1 << "/" << height << "): ";
 		    cin >> firstGeneration;
-		    while (firstGeneration.find_first_not_of(".0") != string::npos || firstGeneration.length() != size) {
+		    while (firstGeneration.find_first_not_of(".0") != string::npos || firstGeneration.length() != size || cin.fail()) {
+		    	cin.clear();
 		        cout << "Illegal characters encountered or wrong generation size. Try again: ";
 		        cin >> firstGeneration;
 			}
     		board.push_back(stringToBinary(firstGeneration));
     	}
     	gameOfLife(board, 5);
-    	return;
+    	return false;
 	}
 
     cout << "Load from file? [Y/n]: ";
     cin >> option;
-
-    if (option == 'Y' || option == 'y') {
-        loadFile();
-    } else {
+    if (cin.fail()) {
+    	cin.clear();
+    	option = "";
+    }
+    bool fileResult = false;
+    if (option == "Y" || option == "y") {
+        fileResult = loadFile();
+    } 
+    if ((option != "Y" && option != "y") || !fileResult) {
     	cout << "Do you want generation to be 1D? [Y/n]: ";
     	cin >> option;
-    	if (option == 'Y' || option == 'y') {
+	    if (cin.fail()) {
+	    	cin.clear();
+	    	option = "";
+	    }
+    	if (option == "Y" || option == "y") {
     		is1d = true;
       	  chooseFirstGeneration(firstGenerationSize(true));
     	} else {
@@ -103,8 +133,11 @@ void initialise() {
     if (ruleSet.size() != 8) {
         cout << "Ruleset is not defined yet. Apply a random ruleset? [Y/n]: ";
         cin >> option;
-
-        if (option == 'Y' || option == 'y') {
+	    if (cin.fail()) {
+	    	cin.clear();
+	    	option = "";
+	    }
+        if (option == "Y" || option == "y") {
             randomRuleSet();
         } else {
             chooseRuleSet();
@@ -112,13 +145,15 @@ void initialise() {
     }
 
     cout << "Ruleset " << binaryToDecimal(ruleSet) << " applied" << endl;
+    return true;
 }
 
 int firstGenerationSize(bool isLength) {
     int generationLength;
     cout << "Enter the " << (isLength ? "length" : "height") << " of the first generation: ";
     cin >> generationLength;
-    while (generationLength <= 3) {
+    while (generationLength <= 3 || cin.fail()) {
+    	cin.clear();
         cout << "Error, input cannot be below 3. Enter a new number: ";
         cin >> generationLength;
     }
@@ -129,18 +164,20 @@ int numberOfGenerationsToRun() {
     int numberOfGenerations;
     cout << "Input the number of generations to run: ";
     cin >> numberOfGenerations;
-    while (numberOfGenerations <= 0) {
+    while (numberOfGenerations <= 0 || cin.fail()) {
+    	cin.clear();
         cout << "Error, input cannot be below 0. Try again: ";
         cin >> numberOfGenerations;
     }
     return numberOfGenerations;
 }
 
-void chooseFirstGeneration(int size) {
+void chooseFirstGeneration(size_t size) {
     string firstGeneration;
     cout << "Enter first generation of size " << size << ". Dots (.) represent empty values, zeros (0) represent full values: ";
     cin >> firstGeneration;
-    while (firstGeneration.find_first_not_of(".0") != string::npos || firstGeneration.length() != size) {
+    while (firstGeneration.find_first_not_of(".0") != string::npos || firstGeneration.length() != size || cin.fail()) {
+    	cin.clear();
         cout << "Illegal characters encountered or wrong generation size. Try again: ";
         cin >> firstGeneration;
     }
@@ -148,12 +185,13 @@ void chooseFirstGeneration(int size) {
     prevGen = currGen;
 }
 
-void chooseFirstGeneration2d(int size, int height) {
+void chooseFirstGeneration2d(size_t size, int height) {
     string firstGeneration;
     for (int i = 0; i < height; i++) {
 	    cout << "Enter one row of generation of size " << size << ". Dots (.) represent empty values, zeros (0) represent full values (" << i+1 << "/" << height << "): ";
 	    cin >> firstGeneration;
-	    while (firstGeneration.find_first_not_of(".0") != string::npos || firstGeneration.length() != size) {
+	    while (firstGeneration.find_first_not_of(".0") != string::npos || firstGeneration.length() != size || cin.fail()) {
+	    	cin.clear();
 	        cout << "Illegal characters encountered or wrong generation size. Try again: ";
 	        cin >> firstGeneration;
 	    }
@@ -166,7 +204,8 @@ void chooseRuleSet() {
     int rulesetDecimal;
     cout << "Enter a ruleset between 0 and 255: ";
     cin >> rulesetDecimal;
-    if (rulesetDecimal < 0 || rulesetDecimal > 255) {
+    if (rulesetDecimal < 0 || rulesetDecimal > 255 || cin.fail()) {
+    	cin.clear();
         cout << "Incorrect value. Try again: ";
         cin >> rulesetDecimal;
     }
@@ -185,7 +224,7 @@ void performGeneration1d(bool wrap) {
     generationsPerformed++;
 
     currGen[0] = ruleSet[getRuleIndex(wrap ? prevGen[currGen.size() - 1] : false, prevGen[0], prevGen[1])];
-    for (int i = 1; i < currGen.size() - 1; i++) {
+    for (size_t i = 1; i < currGen.size() - 1; i++) {
         currGen[i] = ruleSet[getRuleIndex(prevGen[i - 1], prevGen[i], prevGen[i + 1])];
     }
     currGen[currGen.size() - 1] = ruleSet[getRuleIndex(prevGen[currGen.size() - 2], prevGen[currGen.size() - 1], wrap ? prevGen[0] : false)];
@@ -200,22 +239,22 @@ void performGeneration2d(bool wrap) {
     //top row (done separately to allow wrapping)
     if (wrap) {
         currGen2d[0][0] = ruleSet[getRuleIndex(prevGen2d[currGen2d.size() - 1][currGen2d[0].size() - 1], prevGen2d[currGen2d.size() - 1][0], prevGen2d[currGen2d.size() - 1][1])];
-        for (int i = 1; i < currGen2d[0].size() - 1; i++) {
+        for (size_t i = 1; i < currGen2d[0].size() - 1; i++) {
             currGen2d[0][i] = ruleSet[getRuleIndex(prevGen2d[currGen2d.size() - 1][i - 1], prevGen2d[currGen2d.size() - 1][i], prevGen2d[currGen2d.size() - 1][i + 1])];
         }
         currGen2d[0][currGen2d[0].size() - 1] = ruleSet[getRuleIndex(prevGen2d[0][currGen2d[0].size() - 2], prevGen2d[0][currGen2d[0].size() - 1], prevGen2d[0][0])];
     } else {
         currGen2d[0][0] = ruleSet[getRuleIndex(false, false, false)];
-        for (int i = 1; i < currGen2d[0].size() - 1; i++) {
+        for (size_t i = 1; i < currGen2d[0].size() - 1; i++) {
             currGen2d[0][i] = ruleSet[getRuleIndex(false, false, false)];
         }
         currGen2d[0][currGen2d[0].size() - 1] = ruleSet[getRuleIndex(false, false, false)];
     }
 
     //other rows
-    for (int i = 1; i < currGen2d.size(); i++) {
+    for (size_t i = 1; i < currGen2d.size(); i++) {
         currGen2d[i][0] = ruleSet[getRuleIndex(wrap ? prevGen2d[i - 1][currGen2d[0].size() - 1] : false, prevGen2d[i - 1][0], prevGen2d[i - 1][1])];
-        for (int j = 1; j < currGen2d[0].size() - 1; j++) {
+        for (size_t j = 1; j < currGen2d[0].size() - 1; j++) {
             currGen2d[i][j] = ruleSet[getRuleIndex(prevGen2d[i - 1][j - 1], prevGen2d[i - 1][j], prevGen2d[i - 1][j + 1])];
         }
         currGen2d[i][currGen2d[0].size() - 1] = ruleSet[getRuleIndex(prevGen2d[i - 1][currGen2d[0].size() - 2], prevGen2d[i - 1][currGen2d[0].size() - 1], wrap ? prevGen2d[i - 1][0] : false)];
@@ -236,15 +275,15 @@ void gameOfLife(vector<vector<bool>> board, int ticks) {
 
 		//top
 		board[0][0] = gameOfLifeDecision(false, false, false, false, prevBoard[0][0], prevBoard[0][1], false, prevBoard[1][0], prevBoard[1][1]);
-		for (int j = 1; j < board[0].size() - 1; j++) {
+		for (size_t j = 1; j < board[0].size() - 1; j++) {
 			board[0][j] = gameOfLifeDecision(false, false, false, prevBoard[0][j - 1], prevBoard[0][j], prevBoard[0][j + 1], prevBoard[1][j - 1], prevBoard[1][j], prevBoard[1][j + 1]);
 		}
 		board[0][board[0].size() - 1] = gameOfLifeDecision(false, false, false, prevBoard[0][board[0].size() - 2], prevBoard[0][board[0].size() - 1], false, prevBoard[1][board[0].size() - 2], prevBoard[1][board[0].size() - 1], false);
 
 		//middle rows
-		for (int k = 1; k < board.size() - 1; k++) {
+		for (size_t k = 1; k < board.size() - 1; k++) {
 			board[k][0] = gameOfLifeDecision(false, prevBoard[k - 1][0], prevBoard[k - 1][1], false, prevBoard[k][0], prevBoard[k][1], false, prevBoard[k + 1][0], prevBoard[k + 1][1]);
-			for (int j = 1; j < board[0].size() - 1; j++) {
+			for (size_t j = 1; j < board[0].size() - 1; j++) {
 				board[k][j] = gameOfLifeDecision(prevBoard[k - 1][j - 1], prevBoard[k - 1][j], prevBoard[k - 1][j + 1], prevBoard[k][j - 1], prevBoard[k][j], prevBoard[k][j + 1], prevBoard[k + 1][j - 1], prevBoard[k + 1][j], prevBoard[k + 1][j + 1]);
 			}
 			board[k][board[0].size() - 1] = gameOfLifeDecision(prevBoard[k - 1][board[0].size() - 2], prevBoard[k - 1][board[0].size() - 1], false, prevBoard[k][board[0].size() - 2], prevBoard[k][board[0].size() - 1], false, prevBoard[k + 1][board[0].size() - 2], prevBoard[k + 1][board[0].size() - 1], false);
@@ -252,7 +291,7 @@ void gameOfLife(vector<vector<bool>> board, int ticks) {
 
 		//bottom row
 		board[board.size() - 1][0] = gameOfLifeDecision(false, prevBoard[board.size() - 1 - 1][0], prevBoard[board.size() - 1 - 1][1], false, prevBoard[board.size() - 1][0], prevBoard[board.size() - 1][1], false, false, false);
-		for (int j = 1; j < board[0].size() - 1; j++) {
+		for (size_t j = 1; j < board[0].size() - 1; j++) {
 			board[board.size() - 1][j] = gameOfLifeDecision(prevBoard[board.size() - 1 - 1][j - 1], prevBoard[board.size() - 1 - 1][j], prevBoard[board.size() - 1 - 1][j + 1], prevBoard[board.size() - 1][j - 1], prevBoard[board.size() - 1][j], prevBoard[board.size() - 1][j + 1], false, false, false);
 		}
 		board[board.size() - 1][board[0].size() - 1] = gameOfLifeDecision(prevBoard[board.size() - 1 - 1][board[0].size() - 2], prevBoard[board.size() - 1 - 1][board[0].size() - 1], false, prevBoard[board.size() - 1][board[0].size() - 2], prevBoard[board.size() - 1][board[0].size() - 1], false, false, false, false);
@@ -308,14 +347,14 @@ void printGeneration1d() {
 }
 
 void printGeneration2d(vector<vector<bool>> generation) {
-	for (int i = 0; i < generation.size(); i++) {
+	for (size_t i = 0; i < generation.size(); i++) {
     	cout << binaryToString(generation[i]) << endl;
 	}
 }
 
 vector < bool > stringToBinary(string input) {
     vector < bool > output;
-    for (int i = 0; i < input.length(); i++) {
+    for (size_t i = 0; i < input.length(); i++) {
         (input[i] == '.') ? output.push_back(0): output.push_back(1);
     }
     return output;
@@ -323,7 +362,7 @@ vector < bool > stringToBinary(string input) {
 
 string binaryToString(vector < bool > input) {
     string outputString;
-    for (int i = 0; i < input.size(); i++) {
+    for (size_t i = 0; i < input.size(); i++) {
         (input[i] == 0) ? outputString += ".": outputString += "0";
     }
     return outputString;
@@ -355,10 +394,14 @@ int binaryToDecimal(vector < bool > binary) {
     return decimal;
 }
 
-void loadFile() {
-    //TODO: check if file exists
+bool loadFile() {
     ifstream fi(inputFileName);
+    if (!fi.is_open()) {
+    	cout << "File reading is unsuccessful. " << endl;
+    	return false;
+    }
     int decimalRuleSet;
+    fi >> is1d;
     fi >> decimalRuleSet;
     ruleSet = decimalToBinary(decimalRuleSet);
     fi >> generationsPerformed;
@@ -367,14 +410,20 @@ void loadFile() {
     currGen = stringToBinary(currGenString);
     prevGen = currGen;
     fi.close();
+    return true;
 }
 
 void saveFile() {
-    char option;
+    string option;
     cout << "Save results to a file? [Y/n]: ";
     cin >> option;
-    if (option == 'Y' || option == 'y') {
+    if (cin.fail()) {
+    	cin.clear();
+    	option = "";
+    }
+    if (option == "Y" || option == "y") {
         ofstream fr(outputFileName);
+        fr << is1d << endl;
         fr << binaryToDecimal(ruleSet) << endl;
         fr << generationsPerformed << endl;
         fr << binaryToString(currGen) << endl;
