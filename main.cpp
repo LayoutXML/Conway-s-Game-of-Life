@@ -431,9 +431,17 @@ bool loadFile() {
     ruleSet = decimalToBinary(decimalRuleSet);
     fi >> generationsPerformed;
     string currGenString;
-    fi >> currGenString;
-    currGen = stringToBinary(currGenString);
-    prevGen = currGen;
+    if (is1d) {
+	    fi >> currGenString;
+	    currGen = stringToBinary(currGenString);
+	    prevGen = currGen;
+    } else {
+    	while (!fi.eof()) {
+    		fi >> currGenString;
+    		currGen2d.push_back(stringToBinary(currGenString));
+    	}
+    	prevGen2d = currGen2d;
+    }
     fi.close();
     return true;
 }
@@ -451,7 +459,13 @@ void saveFile() {
         fr << is1d << endl;
         fr << binaryToDecimal(ruleSet) << endl;
         fr << generationsPerformed << endl;
-        fr << binaryToString(currGen) << endl;
+        if (is1d) {
+        	fr << binaryToString(currGen) << endl;
+        } else {
+        	for (size_t i = 0; i < currGen2d.size(); i++) {
+		    	fr << binaryToString(currGen2d[i]) << endl;
+			}
+        }
         fr.close();
     }
 }
