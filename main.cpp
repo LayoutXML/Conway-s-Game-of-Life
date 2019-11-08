@@ -7,6 +7,7 @@ using namespace std;
 
 const string outputFileName = "output.txt";
 const string inputFileName = "input.txt";
+const string patternFileName = "pattern.txt";
 
 vector <bool> ruleSet;
 vector <bool> prevGen;
@@ -271,6 +272,7 @@ void gameOfLife(vector<vector<bool>> board, int ticks) {
 	printGeneration2d(board);
 
 	for (int i = 0; i < ticks; i++) {
+		generationsPerformed++;
 		prevBoard = board;
 
 		//top
@@ -343,12 +345,35 @@ bool gameOfLifeDecision(bool tl, bool tm, bool tr, bool l, bool itself, bool r, 
 }
 
 void printGeneration1d() {
-    cout << binaryToString(currGen) << endl;
+	string value = binaryToString(currGen);
+	if (generationsPerformed != 0) {
+		ofstream fr(patternFileName, ios::app);
+		fr << value << endl;
+		fr.close();
+	} else {
+		ofstream fr(patternFileName);
+		fr << value << endl;
+		fr.close();
+	}
+    cout << value << endl;
 }
 
 void printGeneration2d(vector<vector<bool>> generation) {
+	string value;
+	string wholeGeneration;
 	for (size_t i = 0; i < generation.size(); i++) {
-    	cout << binaryToString(generation[i]) << endl;
+		value = binaryToString(generation[i]);
+		wholeGeneration += value + '\n';
+    	cout << value << endl;
+	}
+	if (generationsPerformed != 0) {
+		ofstream fr(patternFileName, ios::app);
+		fr << wholeGeneration << endl;
+		fr.close();
+	} else {
+		ofstream fr(patternFileName);
+		fr << wholeGeneration << endl;
+		fr.close();
 	}
 }
 
