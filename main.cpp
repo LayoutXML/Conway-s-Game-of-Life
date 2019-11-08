@@ -58,6 +58,7 @@ int main() {
     cin >> option;
     if (cin.fail()) {
     	cin.clear();
+    	cin.ignore(10000, '\n');
     	option = "";
     }
     if (option == "Y" || option == "y") {
@@ -93,6 +94,7 @@ bool initialise() {
     if (cin.fail()) {
     	cout << "fail" << endl;
     	cin.clear();
+    	cin.ignore(10000, '\n');
     	option = "";
     }
     if (option == "Y" || option == "y") {
@@ -105,12 +107,13 @@ bool initialise() {
 		    cin >> firstGeneration;
 		    while (firstGeneration.find_first_not_of(".0") != string::npos || firstGeneration.length() != size || cin.fail()) {
 		    	cin.clear();
+		    	cin.ignore(10000, '\n');
 		        cout << "Illegal characters encountered or wrong generation size. Try again: ";
 		        cin >> firstGeneration;
 			}
     		board.push_back(stringToBinary(firstGeneration));
     	}
-    	gameOfLife(board, 5);
+    	gameOfLife(board, numberOfGenerationsToRun());
     	return false;
 	}
 
@@ -119,6 +122,7 @@ bool initialise() {
     cin >> option;
     if (cin.fail()) {
     	cin.clear();
+    	cin.ignore(10000, '\n');
     	option = "";
     }
     bool fileResult = false;
@@ -130,6 +134,7 @@ bool initialise() {
     	cin >> option;
 	    if (cin.fail()) {
 	    	cin.clear();
+	    	cin.ignore(10000, '\n');
 	    	option = "";
 	    }
     	if (option == "Y" || option == "y") {
@@ -149,6 +154,7 @@ bool initialise() {
         cin >> option;
 	    if (cin.fail()) {
 	    	cin.clear();
+	    	cin.ignore(10000, '\n');
 	    	option = "";
 	    }
         if (option == "Y" || option == "y") {
@@ -169,6 +175,7 @@ int firstGenerationSize(bool isLength) {
     cin >> generationLength;
     while (generationLength <= 3 || cin.fail()) {
     	cin.clear();
+    	cin.ignore(10000, '\n');
         cout << "Error, input cannot be below 3. Enter a new number: ";
         cin >> generationLength;
     }
@@ -182,6 +189,7 @@ int numberOfGenerationsToRun() {
     cin >> numberOfGenerations;
     while (numberOfGenerations <= 0 || cin.fail()) {
     	cin.clear();
+    	cin.ignore(10000, '\n');
         cout << "Error, input cannot be below 0. Try again: ";
         cin >> numberOfGenerations;
     }
@@ -197,6 +205,7 @@ void chooseFirstGeneration(size_t size) {
     while (firstGeneration.find_first_not_of(".0") != string::npos || firstGeneration.length() != size || cin.fail()) {
         //check for illegal characters
         cin.clear();
+      	cin.ignore(10000, '\n');
         cout << "Illegal characters encountered or wrong generation size. Try again: ";
         cin >> firstGeneration;
     }
@@ -212,8 +221,9 @@ void chooseFirstGeneration2d(size_t size, int height) {
 	    cout << "Enter one row of generation of size " << size << ". Dots (.) represent empty values, zeros (0) represent full values (" << i+1 << "/" << height << "): ";
 	    cin >> firstGeneration;
 	    while (firstGeneration.find_first_not_of(".0") != string::npos || firstGeneration.length() != size || cin.fail()) {
-	    	//check for illegal characters
-            cin.clear();
+	      	//check for illegal characters
+	      	cin.clear();
+	      	cin.ignore(10000, '\n');
 	        cout << "Illegal characters encountered or wrong generation size. Try again: ";
 	        cin >> firstGeneration;
 	    }
@@ -229,6 +239,7 @@ void chooseRuleSet() {
     cin >> rulesetDecimal;
     if (rulesetDecimal < 0 || rulesetDecimal > 255 || cin.fail()) {
     	cin.clear();
+    	cin.ignore(10000, '\n');
         cout << "Incorrect value. Try again: ";
         cin >> rulesetDecimal;
     }
@@ -487,6 +498,7 @@ void saveFile() {
     cin >> option;
     if (cin.fail()) {
     	cin.clear();
+    	cin.ignore(10000, '\n');
     	option = "";
     }
     if (option == "Y" || option == "y") {
