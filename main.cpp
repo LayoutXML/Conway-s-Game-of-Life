@@ -1,14 +1,18 @@
+//include statements
 #include <iostream>
 #include <fstream>
 #include <vector>
 #include <ctime>
 
+//declare name space
 using namespace std;
 
+//declare file names
 const string outputFileName = "output.txt";
 const string inputFileName = "input.txt";
 const string patternFileName = "pattern.txt";
 
+//declare global variables
 vector <bool> ruleSet;
 vector <bool> prevGen;
 vector <bool> currGen;
@@ -17,6 +21,7 @@ vector <vector<bool>> currGen2d;
 int generationsPerformed = 0;
 bool is1d = true;
 
+//declare fuctions to be used in program
 bool initialise();
 int firstGenerationSize(bool isLength);
 int numberOfGenerationsToRun();
@@ -38,6 +43,7 @@ int getRuleIndex(bool first, bool second, bool third);
 void gameOfLife(vector<vector<bool>> board, int ticks);
 bool gameOfLifeDecision(bool tl, bool tm, bool tr, bool l, bool itself, bool r, bool bl, bool bm, bool br);
 
+//main program function
 int main() {
     if (!initialise()) {
     	return 0;
@@ -47,6 +53,7 @@ int main() {
   	bool wrap = false;
   	string option;
 
+    // ask if to and implement wrap
     cout << "Do you want to wrap? [Y/n]: ";
     cin >> option;
     if (cin.fail()) {
@@ -57,6 +64,7 @@ int main() {
     	wrap = true;
     }
 
+    //print generaton
     if (is1d) {
     	printGeneration1d();
     } else {
@@ -70,13 +78,16 @@ int main() {
         }
     }
 
+    //save current generation
     saveFile();
     return 0;
 }
 
+//initialise rule set, number of generations, load in files etc
 bool initialise() {
     string option;
 
+    //ask if to and implement Conway's rule of life
     cout << "Do you want to play Conway's Game of Life? [Y/n]: ";
     cin >> option;
     if (cin.fail()) {
@@ -103,6 +114,7 @@ bool initialise() {
     	return false;
 	}
 
+    //load generation from file
     cout << "Load from file? [Y/n]: ";
     cin >> option;
     if (cin.fail()) {
@@ -131,6 +143,7 @@ bool initialise() {
     	}
     }
 
+    // ask if to and apply random rule set
     if (ruleSet.size() != 8) {
         cout << "Ruleset is not defined yet. Apply a random ruleset? [Y/n]: ";
         cin >> option;
@@ -149,6 +162,7 @@ bool initialise() {
     return true;
 }
 
+//input first generation of automata
 int firstGenerationSize(bool isLength) {
     int generationLength;
     cout << "Enter the " << (isLength ? "length" : "height") << " of the first generation: ";
@@ -161,6 +175,7 @@ int firstGenerationSize(bool isLength) {
     return generationLength;
 }
 
+//take in number of generations
 int numberOfGenerationsToRun() {
     int numberOfGenerations;
     cout << "Input the number of generations to run: ";
@@ -173,12 +188,15 @@ int numberOfGenerationsToRun() {
     return numberOfGenerations;
 }
 
+//choose first generation and filter illegal characters
 void chooseFirstGeneration(size_t size) {
     string firstGeneration;
+    //take in first row of generation from user
     cout << "Enter first generation of size " << size << ". Dots (.) represent empty values, zeros (0) represent full values: ";
     cin >> firstGeneration;
     while (firstGeneration.find_first_not_of(".0") != string::npos || firstGeneration.length() != size || cin.fail()) {
-    	cin.clear();
+        //check for illegal characters
+        cin.clear();
         cout << "Illegal characters encountered or wrong generation size. Try again: ";
         cin >> firstGeneration;
     }
@@ -186,13 +204,16 @@ void chooseFirstGeneration(size_t size) {
     prevGen = currGen;
 }
 
+//choose first generation and filter illegal characters for 2D
 void chooseFirstGeneration2d(size_t size, int height) {
     string firstGeneration;
+    //take in first row of generation from user
     for (int i = 0; i < height; i++) {
 	    cout << "Enter one row of generation of size " << size << ". Dots (.) represent empty values, zeros (0) represent full values (" << i+1 << "/" << height << "): ";
 	    cin >> firstGeneration;
 	    while (firstGeneration.find_first_not_of(".0") != string::npos || firstGeneration.length() != size || cin.fail()) {
-	    	cin.clear();
+	    	//check for illegal characters
+            cin.clear();
 	        cout << "Illegal characters encountered or wrong generation size. Try again: ";
 	        cin >> firstGeneration;
 	    }
@@ -201,6 +222,7 @@ void chooseFirstGeneration2d(size_t size, int height) {
     prevGen2d = currGen2d;
 }
 
+//take in and error check ruleset
 void chooseRuleSet() {
     int rulesetDecimal;
     cout << "Enter a ruleset between 0 and 255: ";
@@ -213,6 +235,7 @@ void chooseRuleSet() {
     ruleSet = decimalToBinary(rulesetDecimal);
 }
 
+//randomise ruleset used
 void randomRuleSet() {
     srand(time(0));
     ruleSet.clear();
@@ -221,6 +244,7 @@ void randomRuleSet() {
     }
 }
 
+//generate 1 dimensional automata
 void performGeneration1d(bool wrap) {
     generationsPerformed++;
 
@@ -234,6 +258,7 @@ void performGeneration1d(bool wrap) {
     printGeneration1d();
 }
 
+//generate 2 dimensional automata
 void performGeneration2d(bool wrap) {
     generationsPerformed++;
 
@@ -266,6 +291,7 @@ void performGeneration2d(bool wrap) {
     printGeneration2d(currGen2d);
 }
 
+//generate automata for Conway's game of life
 void gameOfLife(vector<vector<bool>> board, int ticks) {
 	vector<vector<bool>> prevBoard;
 	cout << endl;
@@ -303,6 +329,7 @@ void gameOfLife(vector<vector<bool>> board, int ticks) {
 	}
 }
 
+//decisions made for Conway's game of life
 bool gameOfLifeDecision(bool tl, bool tm, bool tr, bool l, bool itself, bool r, bool bl, bool bm, bool br) {
 	int liveNeighbours = 0;
 	if (tl) {
@@ -344,6 +371,7 @@ bool gameOfLifeDecision(bool tl, bool tm, bool tr, bool l, bool itself, bool r, 
 	return false;
 }
 
+//print out 1 dimentional automata
 void printGeneration1d() {
 	string value = binaryToString(currGen);
 	if (generationsPerformed != 0) {
@@ -358,6 +386,7 @@ void printGeneration1d() {
     cout << value << endl;
 }
 
+//print out 1 dimentional automata
 void printGeneration2d(vector<vector<bool>> generation) {
 	string value;
 	string wholeGeneration;
@@ -377,6 +406,7 @@ void printGeneration2d(vector<vector<bool>> generation) {
 	}
 }
 
+//convert string to binary value
 vector < bool > stringToBinary(string input) {
     vector < bool > output;
     for (size_t i = 0; i < input.length(); i++) {
@@ -385,6 +415,7 @@ vector < bool > stringToBinary(string input) {
     return output;
 }
 
+//convert binary value to string
 string binaryToString(vector < bool > input) {
     string outputString;
     for (size_t i = 0; i < input.size(); i++) {
@@ -393,6 +424,7 @@ string binaryToString(vector < bool > input) {
     return outputString;
 }
 
+//convert decimal value to binary
 vector < bool > decimalToBinary(int decimal) {
     vector < bool > binary;
     while (decimal != 1) {
@@ -406,6 +438,7 @@ vector < bool > decimalToBinary(int decimal) {
     return binary;
 }
 
+// convert binary to decimal value
 int binaryToDecimal(vector < bool > binary) {
     int i = 1;
     int element;
@@ -419,6 +452,7 @@ int binaryToDecimal(vector < bool > binary) {
     return decimal;
 }
 
+//load in external file
 bool loadFile() {
     ifstream fi(inputFileName);
     if (!fi.is_open()) {
@@ -446,6 +480,7 @@ bool loadFile() {
     return true;
 }
 
+//save (write to) an external file
 void saveFile() {
     string option;
     cout << "Save results to a file? [Y/n]: ";
@@ -470,6 +505,7 @@ void saveFile() {
     }
 }
 
+//create rule index based off binary rule value
 int getRuleIndex(bool first, bool second, bool third) {
     //111 110 101 100 011 010 001 000
     if (first) {
